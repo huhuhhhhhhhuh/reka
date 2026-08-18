@@ -130,8 +130,8 @@
   /* ---------- View tabs ---------- */
   .view-tabs { max-width: 1000px; margin: 0 auto; padding: 24px 20px 0; display: flex; gap: 8px; flex-wrap: wrap; }
   .view-tab {
-    flex: 1 1 120px; /* Растягиваем кнопки по всей ширине */
-    text-align: center; /* Центрируем текст внутри кнопок */
+    flex: 1 1 120px;
+    text-align: center;
     padding: 10px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: transparent;
     color: var(--text-muted); font-family: 'PT Serif', serif; font-size: 13.5px; cursor: pointer;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
@@ -263,25 +263,33 @@
   .req-inline { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
   .note { font-size: 12px; color: var(--driftwood); line-height: 1.5; margin: 0 0 10px; font-style: italic; }
   
+  /* Скрытие спиннеров на полях type=number */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+  input[type=number] {
+      -moz-appearance: textfield;
+  }
+
   .control-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
   .num-wrap { display: flex; align-items: center; gap: 6px; flex: 1; }
-  .num-wrap input[type=number] {
-    width: 72px; background: var(--bg-panel-2); border: 1px solid var(--border); border-radius: var(--radius);
-    color: var(--text); font-family: 'PT Mono', monospace; font-size: 13px; padding: 6px 4px; text-align: center;
+  
+  /* Общие стили для полей с числами */
+  .progress-input, .variant-counter-input, .multi-counter-input {
+    width: 52px; background: var(--bg-panel-2); border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text); font-family: 'PT Mono', monospace; font-size: 13px; padding: 5px 4px; text-align: center;
+    transition: border-color .2s;
   }
-  .num-wrap input[type=number]:focus { outline: none; border-color: var(--gold-soft); }
-  .step-btn {
-    width: 28px; height: 28px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg-panel-2);
-    color: var(--moss); cursor: pointer; font-size: 15px; flex-shrink: 0; line-height: 1;
-    display: flex; align-items: center; justify-content: center; transition: border-color .2s, color .2s;
-  }
-  .step-btn:hover { border-color: var(--gold-soft); color: var(--gold); }
-  .of-target { font-family: 'PT Mono', monospace; font-size: 12.5px; color: var(--text-muted); }
+  .progress-input:focus, .variant-counter-input:focus, .multi-counter-input:focus { outline: none; border-color: var(--gold-soft); }
+  
+  .of-target { font-family: 'PT Mono', monospace; font-size: 12.5px; color: var(--text-muted); margin-left: 2px; }
   
   .mini-track { flex: 1; height: 7px; border-radius: var(--radius); background: var(--bg-panel-2); overflow: hidden; border: 1px solid var(--border); }
   .mini-fill { height: 100%; background: linear-gradient(90deg, var(--moss), var(--gold)); width: 0%; transition: width .4s ease; }
   
-  /* ---------- Красивый чекбокс «получено» ---------- */
+  /* Красивый чекбокс «получено» */
   .toggle-check {
     display: flex; align-items: center; gap: 11px; cursor: pointer; margin-top: 10px;
     padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg-panel-2);
@@ -301,7 +309,7 @@
   .toggle-check .txt { font-size: 13.5px; color: var(--text-muted); transition: color .2s; }
   .toggle-check.checked .txt { color: var(--gold); font-weight: 700; }
   
-  /* ---------- Варианты получения (переключатель способов) ---------- */
+  /* Варианты получения */
   .variant-hint { font-size: 11.5px; color: var(--text-muted); margin: 2px 0 10px; line-height: 1.5; }
   .variant-tabs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 4px; }
   .variant-tab {
@@ -531,6 +539,7 @@
   </div>
 </div>
 <div class="save-flag" id="saveFlag">✓ сохранено</div>
+
 <script>
 const ICONS = {
   paw: `M32 34c9 0 18 8 18 17 0 6-5 9-11 9-4 0-6-2-7-2s-3 2-7 2c-6 0-11-3-11-9 0-9 9-17 18-17z
@@ -539,18 +548,18 @@ const ICONS = {
     M24 18c4 0 7-4 7-9s-3-9-7-9-7 4-7 9 3 9 7 9z
     M40 18c4 0 7-4 7-9s-3-9-7-9-7 4-7 9 3 9 7 9z`,
   moon: `M40 5 C23 5 10 19 10 36 C10 51 21 63 36 63 C27 56 21 45 21 33 C21 20 28 10 40 5 Z`,
-  wave: `M4 40 C14 20 24 20 32 32 C40 44 50 44 60 24 L60 34 C50 54 40 54 32 42 C24 30 14 30 4 50 Z`,
-  leaf: `M32 4 C50 8 58 26 54 42 C50 58 34 60 22 52 C10 44 8 26 16 14 C22 6 28 4 32 4 Z`,
+  lightning: `M38 4 L16 36 H 30 L24 60 L48 26 H 34 Z`,
+  grass: `M32 60 V 45 C20 40 10 30 15 15 C25 15 30 25 32 35 C28 20 28 8 32 4 C36 8 36 20 32 35 C34 25 39 15 49 15 C54 30 44 40 32 45 V 60 Z`,
   shield: `M32 4 L56 14 V30 C56 46 46 57 32 60 C18 57 8 46 8 30 V14 Z`,
   feather: `M50 6 C34 8 18 22 12 42 C12 42 22 50 34 44 C46 38 54 22 50 6 Z`,
   star: `M32 4 L40 24 L62 26 L45 40 L51 62 L32 50 L13 62 L19 40 L2 26 L24 24 Z`,
 };
-const ICON_OPTIONS = ["paw","moon","wave","leaf","shield","feather"];
-const ICON_LABELS = {paw:"Лапа", moon:"Полумесяц", wave:"Волна", leaf:"Лист", shield:"Щит", feather:"Перо"};
+const ICON_OPTIONS = ["paw","moon","lightning","grass","shield","feather"];
+const ICON_LABELS = {paw:"Лапа", moon:"Полумесяц", lightning:"Искра", grass:"Трава", shield:"Щит", feather:"Перо"};
 const SPHERE_ICON = {
-  "Сфера активности":"wave",
+  "Сфера активности":"lightning",
   "Сфера детства":"paw",
-  "Сфера ресурсов":"leaf",
+  "Сфера ресурсов":"grass",
   "Сфера безопасности и бойцов":"shield",
   "Сфера творчества":"feather",
   "Особые медали":"moon",
@@ -575,7 +584,7 @@ const MEDALS = [
 {id:"a6", sphere:"Сфера активности", subcat:"Общедоступные", name:"«За помощь в повышении силы»", req:"Набрать 300 баллов за грушевание большой (50 часов), маленькой или одиночной (30 часов) грушей суммарно.", type:"counter", target:300, unit:"баллов", image:"https://catwar.net/medal/3555.png", blog:"https://catwar.net/blog24272"},
 {id:"a7", sphere:"Сфера активности", subcat:"Общедоступные", name:"«За чистку локаций»", req:"Накопить 600 баллов за чистку локаций от спящих в неположенном месте котов.", type:"counter", target:600, unit:"баллов", image:"https://catwar.net/medal/75.png", blog:"https://catwar.net/blog13219"},
 {id:"a8", sphere:"Сфера активности", subcat:"Общедоступные", name:"«За усилия, ставшие жемчужным светом»", req:"Покупается в обмен на 80 жемчужин в племенном магазине.", type:"toggle", image:"https://catwar.net/medal/5184.png", blog:"https://catwar.net/blog1177097"},
-{id:"a9", sphere:"Сфера активности", subcat:"Общедоступные", name:"«За выдающиеся успехи в прокачивании Плавательных умений»", req:"Достичь 9 уровня ПУ.", note:"Планируется замена медали на ачивку с частично иными требованиями. Если хочешь получить именно медаль — успей до сентября.", type:"counter", target:9, unit:"уровень", image:"https://catwar.net/medal/613.png", blog:""},
+{id:"a9", sphere:"Сфера активности", subcat:"Общедоступные", name:"«За выдающиеся успехи в прокачивании Плавательных умений»", req:"Достичь 9 уровня ПУ.", note:"Планируется замена медали на ачивку с частично иными требованиями. Если хочешь получить именно медаль — успей до сентября.", type:"counter", target:9, unit:"уровней", image:"https://catwar.net/medal/613.png", blog:""},
 {id:"a10", sphere:"Сфера активности", subcat:"Общедоступные", name:"«За образцовое усердие»*", req:"Получить суммарно 8 ачивок из любых категорий.", type:"counter", target:8, unit:"ачивок", image:"https://catwar.net/medal/2993.png", blog:"https://catwar.net/blog618534"},
 {id:"a11", sphere:"Сфера активности", subcat:"Общедоступные", name:"«За пыл, держащий на гребнях волн»", req:"Стать активистом недели (или месяца, если активиста недели в блоге/отряде нет) 12 и более раз в различной деятельности.", note:"Следует предоставить свой ID и скриншоты становления активистом.", type:"counter", target:12, unit:"раз", image:"https://catwar.net/medal/5146.png", blog:""},
 {id:"a12", sphere:"Сфера активности", subcat:"Общедоступные", name:"«Друг вольных степей»", req:"Набрать 120 баллов на обмене с племенем Ветра.", type:"counter", target:120, unit:"баллов", image:"https://catwar.net/medal/5185.png", blog:"https://catwar.net/blog1172570"},
@@ -589,7 +598,12 @@ const MEDALS = [
 {id:"a15", sphere:"Сфера активности", subcat:"Отрядные", name:"«За наблюдательность»", image:"https://catwar.net/medal/411.png", blog:"https://catwar.net/blog291989",
   note:"Медаль не выдаётся при наличии серьёзных нарушений дисциплины — независимо от выбранного способа.",
   variants:[
-    {label:"Способ 1", type:"counter", target:350, unit:"баллов в отряде", req:"350 баллов в отряде + 50 дозоров ПЦ/ГБ + 20 участий в травнике и квестов (или 20 переносов)."},
+    {label:"Способ 1", type:"multi", req:"350 баллов в отряде + 50 дозоров ПЦ/ГБ + 20 участий в травнике и квестов (или 20 переносов).",
+      items: [
+        {key:"pts", label:"Баллы в отряде", type:"counter", target:350, unit:"баллов"},
+        {key:"pat", label:"Дозоры ПЦ/ГБ", type:"counter", target:50, unit:"дозоров"},
+        {key:"hrb", label:"Травник/квесты", type:"counter", target:20, unit:"участий"}
+      ]},
     {label:"Способ 2", type:"counter", target:550, unit:"баллов", req:"550 баллов в отряде — без дополнительных условий."}
   ]},
 {id:"a16", sphere:"Сфера активности", subcat:"Отрядные", name:"«За верность порядку»", req:"Совершить 100 проверок дозорных, будучи Проверяющим.", type:"counter", target:100, unit:"проверок", image:"https://catwar.net/medal/1365.png", blog:"https://catwar.net/blog13664"},
@@ -601,7 +615,12 @@ const MEDALS = [
 {id:"d1", sphere:"Сфера детства", subcat:"Общедоступные", name:"«За сохранение озорного нрава»", req:"Набрать 800 баллов, побеждая и принимая участие в играх от Озорников.", type:"counter", target:800, unit:"баллов", image:"https://catwar.net/medal/4249.png", blog:"https://catwar.net/blog14909"},
 {id:"d2", sphere:"Сфера детства", subcat:"Общедоступные", name:"«За активную родительскую деятельность и заботу о котятах»", req:"Достичь 140 баллов за родительскую деятельность.", type:"counter", target:140, unit:"баллов", image:"https://catwar.net/medal/73.png", blog:"https://catwar.net/blog15700"},
 {id:"d3", sphere:"Сфера детства", subcat:"Котячьи", name:"«За стремление к знаниям»", req:"Написать все 5 принятий на 10/10 без пересдач (или исправить недостающий балл дополнительными принятиями), будучи Познающим.", type:"toggle", image:"https://catwar.net/medal/504.png", blog:"https://catwar.net/blog428342"},
-{id:"d4", sphere:"Сфера детства", subcat:"Котячьи", name:"«За пылающее детским озорством сердце»", req:"Выполнить по 2 постоянных задания из 3 любых категорий, набрать 30 очков за постоянные задания и выполнить 7 недельных заданий своей команды, будучи Сорванцом.", type:"counter", target:30, unit:"очков", image:"https://catwar.net/medal/69.png", blog:"https://catwar.net/blog1043001"},
+{id:"d4", sphere:"Сфера детства", subcat:"Котячьи", name:"«За пылающее детским озорством сердце»", req:"Выполнить по 2 постоянных задания из 3 любых категорий, набрать 30 очков за постоянные задания и выполнить 7 недельных заданий своей команды, будучи Сорванцом.", type:"multi",
+  items: [
+    {key:"cat", label:"Категории заданий", type:"counter", target:3, unit:"шт"},
+    {key:"pts", label:"Очки за постоянные", type:"counter", target:30, unit:"очков"},
+    {key:"week", label:"Недельные задания", type:"counter", target:7, unit:"шт"}
+  ], image:"https://catwar.net/medal/69.png", blog:"https://catwar.net/blog1043001"},
 {id:"d5", sphere:"Сфера детства", subcat:"Отрядные", name:"«За весёлые игры и звонкий смех»", req:"Набрать 125 баллов за активное проведение игр в отряде Озорников.", type:"counter", target:125, unit:"баллов", image:"https://catwar.net/medal/247.png", blog:"https://catwar.net/blog14909"},
 {id:"d6", sphere:"Сфера детства", subcat:"Отрядные", name:"«За создание тёплых воспоминаний о беззаботном детстве»", req:"Набрать 55 баллов, занимаясь котятами в составе Затейников.", type:"counter", target:55, unit:"баллов", image:"https://catwar.net/medal/2992.png", blog:"https://catwar.net/blog1043001"},
 {id:"d7", sphere:"Сфера детства", subcat:"Отрядные", name:"«За активную деятельность в Вожатых»", req:"Накопить 5000 баллов в отряде Вожатых за помощь с прокачиванием навыков вне лагеря Храбрецам.", type:"counter", target:5000, unit:"баллов", image:"https://catwar.net/medal/249.png", blog:"https://catwar.net/blog562586"},
@@ -616,11 +635,15 @@ const MEDALS = [
 {id:"r5", sphere:"Сфера ресурсов", subcat:"Общедоступные", name:"«За невиданную щедрость»", req:"Набрать 50 баллов (или 25, если медаль была получена на предыдущих персонажах), сдавая в племенную казну уникальные предметы, сезонные баффы и, иногда, временные предметы.", type:"counter", target:50, unit:"баллов", image:"https://catwar.net/medal/3809.png", blog:"https://catwar.net/blog1177097"},
 {id:"r6", sphere:"Сфера ресурсов", subcat:"Отрядные", name:"«За сбор паутины»", req:"Набрать 350 баллов в отряде Туннелеров за посещение спавнов, ловлю паутины и не только.", type:"counter", target:350, unit:"баллов", image:"https://catwar.net/medal/245.png", blog:"https://catwar.net/blog14264"},
 {id:"r7", sphere:"Сфера ресурсов", subcat:"Отрядные", name:"«За покорение горных вершин»", req:"Набрать 350 баллов в отряде Покорителей вершин за осмотр гор после спавна, нахождение мха и не только.", type:"counter", target:350, unit:"баллов", image:"https://catwar.net/medal/244.png", blog:"https://catwar.net/blog60142"},
-{id:"r8", sphere:"Сфера ресурсов", subcat:"Отрядные", name:"«За отвагу на краю пропасти»", req:"Набрать 200 баллов в отряде Скалолазов в борьбе за ресурсы на уступах и в ущелье, а также посетить Зловонное ущелье минимум 20 раз.", type:"counter", target:200, unit:"баллов", image:"https://catwar.net/medal/369.png", blog:"https://catwar.net/blog1091768"},
+{id:"r8", sphere:"Сфера ресурсов", subcat:"Отрядные", name:"«За отвагу на краю пропасти»", req:"Набрать 200 баллов в отряде Скалолазов в борьбе за ресурсы на уступах и в ущелье, а также посетить Зловонное ущелье минимум 20 раз.", type:"multi",
+  items: [
+    {key:"pts", label:"Баллы в отряде", type:"counter", target:200, unit:"баллов"},
+    {key:"gorge", label:"Зловонное ущелье", type:"counter", target:20, unit:"раз"}
+  ], image:"https://catwar.net/medal/369.png", blog:"https://catwar.net/blog1091768"},
 {id:"r9", sphere:"Сфера ресурсов", subcat:"Мероприятия", name:"«За ясный взор, что не страшится тьмы»", req:"Набрать 125 баллов за деятельность на Дне открытых дверей отряда Туннелеров.", type:"counter", target:125, unit:"баллов", image:"https://catwar.net/medal/2793.png", blog:"https://catwar.net/blog14264"},
 {id:"r10", sphere:"Сфера ресурсов", subcat:"Мероприятия", name:"«За сильный дух, что прокладывает тропы средь снежных хребтов»", req:"Набрать 125 баллов за деятельность на Дне открытых дверей отряда Покорителей вершин.", type:"counter", target:125, unit:"баллов", image:"https://catwar.net/medal/5145.png", blog:"https://catwar.net/blog60142"},
 // ---- Сфера безопасности и бойцов ----
-{id:"b1", sphere:"Сфера безопасности и бойцов", subcat:"Общедоступные", name:"«За выдающиеся боевые умения»", req:"Достичь 9 уровня БУ.", type:"counter", target:9, unit:"уровень", image:"https://catwar.net/medal/188.png", blog:""},
+{id:"b1", sphere:"Сфера безопасности и бойцов", subcat:"Общедоступные", name:"«За выдающиеся боевые умения»", req:"Достичь 9 уровня БУ.", type:"counter", target:9, unit:"уровней", image:"https://catwar.net/medal/188.png", blog:""},
 {id:"b2", sphere:"Сфера безопасности и бойцов", subcat:"Отрядные", name:"«За отвагу над пропастью и под землёй»", req:"Собрать 20 баллов за посещение рейдов на Орлицу или Пещерную Лису в составе боевого ордена.", type:"counter", target:20, unit:"баллов", image:"https://catwar.net/medal/5254.png", blog:"https://catwar.net/blog268845"},
 {id:"b3", sphere:"Сфера безопасности и бойцов", subcat:"Отрядные", name:"«За бесстрашие в бою и преданность воинскому ремеслу»", req:"Набрать 70 баллов активности путём посещения различных боевых активностей: мероприятия, тренировки, рейды, обучение.", type:"counter", target:70, unit:"баллов", image:"https://catwar.net/medal/413.png", blog:"https://catwar.net/blog268845"},
 {id:"b4", sphere:"Сфера безопасности и бойцов", subcat:"Отрядные", name:"«За участие в битвах за локации»", req:"Принять участие в битве за локации хотя бы один раз или дважды активно помочь в подготовке к бою основной команды.", type:"toggle", image:"https://catwar.net/medal/119.png", blog:"https://catwar.net/blog268845"},
@@ -640,18 +663,28 @@ const MEDALS = [
 {id:"c3", sphere:"Сфера творчества", subcat:"Отрядные", name:"«За переданные послания звёзд»", req:"1 способ: набрать 75 баллов.", type:"counter", target:75, unit:"баллов", image:"https://catwar.net/medal/1715.png", blog:"https://catwar.net/blog47872"},
 {id:"c4", sphere:"Сфера творчества", subcat:"Отрядные", name:"«За преданность искусству»", req:"Набрать 120 баллов Иллюстратора, художественно помогая племени.", type:"counter", target:120, unit:"баллов", image:"https://catwar.net/medal/3393.png", blog:"https://catwar.net/blog865117"},
 {id:"c5", sphere:"Сфера творчества", subcat:"Отрядные", name:"«За покраску клонов»", req:"Накопить 50 баллов Маляра путём покраски различных клонов.", type:"counter", target:50, unit:"баллов", image:"https://catwar.net/medal/4136.png", blog:"https://catwar.net/blog865117"},
-{id:"c6", sphere:"Сфера творчества", subcat:"Отрядные", name:"«За искусное владение пером»", req:"Достичь 30 баллов и состоять в отряде Журналистов минимум 2 месяца.", note:"На данный момент получение затруднено из-за проводящейся реформы отряда.", type:"counter", target:30, unit:"баллов", image:"https://catwar.net/medal/3375.png", blog:"https://catwar.net/blog434004"},
+{id:"c6", sphere:"Сфера творчества", subcat:"Отрядные", name:"«За искусное владение пером»", req:"Достичь 30 баллов и состоять в отряде Журналистов минимум 2 месяца.", note:"На данный момент получение затруднено из-за проводящейся реформы отряда.", type:"multi",
+  items: [
+    {key:"pts", label:"Баллы", type:"counter", target:30, unit:"баллов"},
+    {key:"mon", label:"Месяцы в отряде", type:"counter", target:2, unit:"мес"}
+  ], image:"https://catwar.net/medal/3375.png", blog:"https://catwar.net/blog434004"},
 {id:"c7", sphere:"Сфера творчества", subcat:"Отрядные", name:"«За создание сюжетов, трогающих душу»", req:"Набрать 100 баллов за проведение мафии.", note:"На данный момент получение затруднено из-за проводящейся реформы отряда.", type:"counter", target:100, unit:"баллов", image:"https://catwar.net/medal/3374.png", blog:"https://catwar.net/blog931073"},
 // ---- Особые медали ----
-{id:"sp1", sphere:"Особые медали", subcat:"Общедоступные", name:"«За активное участие в жизни племени»", req:"1. Выбрать 3 любые медали из общего списка (на ваш выбор).<br>2. Иметь 8+ ПУ или 8+ БУ.<br>3. Выполнить одну практику на выбор:<br>— Охраняющие границы: 2400 мин дозоров или 40 патрулей;<br>— Охотники: 70 баллов;<br>— Травники: 20 баллов;<br>— Покорители: 10 патрулей за мхом;<br>— Туннелеры: 10 паутинников;<br>— Скалолазы: 12 сборов со скал.<br>Для отрядных практик нужно заранее предупредить главу. После выполнения — скриншот или подтверждение от главы.", note:"Если медаль уже была получена в другой фракции — требования выполняются заново. При изгнании после запроса медаль не выдаётся. Совет: используй вкладку «Планировщик», чтобы держать под рукой прогресс по трём выбранным медалям и уровню ПУ/БУ отдельно.", type:"toggle"},
-{id:"sp2", sphere:"Особые медали", subcat:"Общедоступные", name:"«За неоценимый вклад в развитие племени»", image:"", blog:"",
-  note:"Идеи и участие с предыдущих персонажей засчитываются, если есть доказательства и медаль ранее не выдавалась за них. Запрос — в ЛС Разжигающей Звёзды с перечнем и доказательствами.",
-  variants:[
-    {label:"Крупная идея", type:"toggle", req:"Подать одну крупную идею, реализованную без изменений, или быть главным реализатором крупного нововведения."},
-    {label:"Три идеи", type:"toggle", req:"Подать три менее масштабные идеи (либо активно поучаствовать в реализации трёх нововведений)."},
-    {label:"Комбинация", type:"toggle", req:"Комбинация: например, две идеи + одно участие."},
-    {label:"Повторное получение", type:"toggle", req:"Если медаль уже есть — достаточно одной идеи (не обязательно крупной) или одного участия."}
+{id:"sp1", sphere:"Особые медали", subcat:"Общедоступные", name:"«За активное участие в жизни племени»",
+  note:"Нужно: иметь 8+ ПУ/БУ, 3 любые другие медали и выполнить одну практику. Совет: используй вкладку «Планировщик», чтобы держать прогресс под рукой.",
+  variants: [
+    {label:"Охраняющие (минуты)", type:"multi", items: [{key:"lvl", label:"8+ ПУ или БУ", type:"toggle"}, {key:"med", label:"Собрано 3 медали", type:"toggle"}, {key:"prc", label:"Дозоры", type:"counter", target:2400, unit:"мин"}]},
+    {label:"Охраняющие (патрули)", type:"multi", items: [{key:"lvl", label:"8+ ПУ или БУ", type:"toggle"}, {key:"med", label:"Собрано 3 медали", type:"toggle"}, {key:"prc", label:"Патрули", type:"counter", target:40, unit:"шт"}]},
+    {label:"Охотники", type:"multi", items: [{key:"lvl", label:"8+ ПУ или БУ", type:"toggle"}, {key:"med", label:"Собрано 3 медали", type:"toggle"}, {key:"prc", label:"Охота", type:"counter", target:70, unit:"баллов"}]},
+    {label:"Травники", type:"multi", items: [{key:"lvl", label:"8+ ПУ или БУ", type:"toggle"}, {key:"med", label:"Собрано 3 медали", type:"toggle"}, {key:"prc", label:"Травники", type:"counter", target:20, unit:"баллов"}]},
+    {label:"Покорители", type:"multi", items: [{key:"lvl", label:"8+ ПУ или БУ", type:"toggle"}, {key:"med", label:"Собрано 3 медали", type:"toggle"}, {key:"prc", label:"Патрули (мох)", type:"counter", target:10, unit:"шт"}]},
+    {label:"Туннелеры", type:"multi", items: [{key:"lvl", label:"8+ ПУ или БУ", type:"toggle"}, {key:"med", label:"Собрано 3 медали", type:"toggle"}, {key:"prc", label:"Паутинники", type:"counter", target:10, unit:"шт"}]},
+    {label:"Скалолазы", type:"multi", items: [{key:"lvl", label:"8+ ПУ или БУ", type:"toggle"}, {key:"med", label:"Собрано 3 медали", type:"toggle"}, {key:"prc", label:"Сборы (скалы)", type:"counter", target:12, unit:"шт"}]}
   ]},
+{id:"sp2", sphere:"Особые медали", subcat:"Общедоступные", name:"«За неоценимый вклад в развитие племени»",
+  req:"Выберите один из вариантов:<br>• Подать одну крупную идею, реализованную без изменений, или быть главным реализатором крупного нововведения.<br>• Подать три менее масштабные идеи (либо активно поучаствовать в реализации трёх нововведений).<br>• Комбинация: например, две идеи + одно участие.<br>• Для повторного получения: если медаль уже есть — достаточно одной идеи (не обязательно крупной) или одного участия.",
+  note:"Идеи и участие с предыдущих персонажей засчитываются, если есть доказательства. Запрос — в ЛС Разжигающей Звёзды.",
+  type:"toggle", image:"", blog:""},
 // ---- Ачивки ----
 {id:"ac1", sphere:"Ачивки", subcat:"Общедоступные", name:"«Удар за ударом»", req:"Набрать 20 часов грушевания мелкой или одиночной грушей.", note:"Выдаётся по запросу у ответственных за блог Грушевания.", type:"counter", target:20, unit:"часов", image:"https://i.yapx.cc/Y3Qdj.png", blog:"https://catwar.net/blog24272"},
 {id:"ac2", sphere:"Ачивки", subcat:"Общедоступные", name:"«Висит груша, нельзя скушать»", req:"Набрать 25 часов грушевания большой грушей.", note:"Выдаётся по запросу у ответственных за блог Грушевания.", type:"counter", target:25, unit:"часов", image:"https://i.yapx.cc/Y3Qee.png", blog:"https://catwar.net/blog24272"},
@@ -660,7 +693,7 @@ const MEDALS = [
 {id:"ac5", sphere:"Ачивки", subcat:"Общедоступные", name:"«Мышиный король»", req:"Поймать 100 и более мышей во время охотничьих патрулей.", note:"Выдаётся по запросу у ответственных за блог Охоты.", type:"counter", target:100, unit:"мышей", image:"https://i.yapx.cc/X6RHK.png", blog:"https://catwar.net/blog51844"},
 {id:"ac6", sphere:"Ачивки", subcat:"Общедоступные", name:"«Расхититель орлиных гнёзд»", req:"Набрать 75 и более баллов за транспортировку перьев с Орлицы.", note:"Выдаётся по запросу у ответственных за блог Скалолазов.", type:"counter", target:75, unit:"баллов", image:"https://i.yapx.cc/Yg3dI.png", blog:"https://catwar.net/blog1091768"},
 {id:"ac7", sphere:"Ачивки", subcat:"Боевые", name:"«Завсегдатай арены»", req:"Посетить 80 тренировок.", note:"Выдаётся по запросу у ответственных за блог Боевых орденов.", type:"counter", target:80, unit:"тренировок", image:"https://i.yapx.cc/X661C.png", blog:"https://catwar.net/blog268845"},
-{id:"ac8", sphere:"Ачивки", subcat:"Боевые", name:"«Всё под контролем»", req:"Принять активную организаторскую деятельность в Орденах.", note:"Выдаётся по запросу у ответственных за блог Боевых орденов.", type:"toggle", image:"https://i.yapx.cc/XrSMg.png", blog:"https://catwar.net/blog268845"},
+{id:"ac8", sphere:"Ачивки", subcat:"Боевые", name:"«Всё под контролям»", req:"Принять активную организаторскую деятельность в Орденах.", note:"Выдаётся по запросу у ответственных за блог Боевых орденов.", type:"toggle", image:"https://i.yapx.cc/XrSMg.png", blog:"https://catwar.net/blog268845"},
 {id:"ac9", sphere:"Ачивки", subcat:"Боевые", name:"«Живи с честью, умри со славой!»", req:"Участвовать в мероприятии «Живи с честью, умри со славой!» минимум 3 раза.", note:"Выдаётся по запросу у ответственных за блог Боевых орденов.", type:"counter", target:3, unit:"раз", image:"https://i.ibb.co/LkGXS26/image.png", blog:"https://catwar.net/blog268845"},
 {id:"ac10", sphere:"Ачивки", subcat:"Боевые", name:"«Я уже не чувствую боли»", req:"Прокачать Боевой Пропуск два раза до 45 уровня или один раз до 90 уровня.", note:"Выдаётся по запросу у ответственных за блог Боевых орденов.", type:"toggle", image:"https://i.yapx.cc/YCRdA.png", blog:"https://catwar.net/blog268845"},
 {id:"ac11", sphere:"Ачивки", subcat:"Мероприятия", name:"«Кошки-мышки»", req:"Поймать 18 единиц дичи за один охотничий турнир.", note:"Выдаётся по запросу у ответственных за блог Охоты.", type:"counter", target:18, unit:"единиц", image:"https://i.yapx.cc/XrSSn.png", blog:"https://catwar.net/blog51844"},
@@ -674,15 +707,35 @@ const MEDALS = [
 {id:"ac19", sphere:"Ачивки", subcat:"Творцы", name:"«Воплощающий идеи в реальность»", req:"Организовать и провести не менее 5 мероприятий в роли Творца.", note:"Выдаётся по запросу у ответственных за блог Творцов.", type:"counter", target:5, unit:"мероприятий", image:"https://i.yapx.cc/XrSi9.png", blog:"https://catwar.net/blog971489"},
 {id:"ac20", sphere:"Ачивки", subcat:"Творцы", name:"«Вся жизнь — театр»", req:"Отыграть роль в сумме не менее 25 часов (для Актёров).", note:"Выдаётся по запросу у ответственных за блог Творцов.", type:"counter", target:25, unit:"часов", image:"https://i.yapx.cc/X6RvB.png", blog:"https://catwar.net/blog971489"},
 {id:"ac21", sphere:"Ачивки", subcat:"Журналисты", name:"«Самому старательному Журналисту»", req:"Принять активное участие в создании 5 выпусков журнала.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"counter", target:5, unit:"выпусков", image:"https://i.yapx.cc/X0cH6.png", blog:"https://catwar.net/blog434004"},
-{id:"ac22", sphere:"Ачивки", subcat:"Журналисты", name:"«Выдающийся дизайнер»", req:"Написать 10 кодов и подготовить 2 выпуска в роли дизайнера.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"toggle", image:"https://i.yapx.cc/XrSj3.png", blog:"https://catwar.net/blog434004"},
-{id:"ac23", sphere:"Ачивки", subcat:"Журналисты", name:"««Нет» ошибкам!»", req:"Проверить 2 выпуска и исправить 50 ошибок в роли редактора.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"toggle", image:"https://i.yapx.cc/X0cI1.png", blog:"https://catwar.net/blog434004"},
+{id:"ac22", sphere:"Ачивки", subcat:"Журналисты", name:"«Выдающийся дизайнер»", req:"Написать 10 кодов и подготовить 2 выпуска в роли дизайнера.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"multi",
+  items: [
+    {key:"cod", label:"Коды", type:"counter", target:10, unit:"шт"},
+    {key:"iss", label:"Выпуски", type:"counter", target:2, unit:"шт"}
+  ], image:"https://i.yapx.cc/XrSj3.png", blog:"https://catwar.net/blog434004"},
+{id:"ac23", sphere:"Ачивки", subcat:"Журналисты", name:"««Нет» ошибкам!»", req:"Проверить 2 выпуска и исправить 50 ошибок в роли редактора.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"multi",
+  items: [
+    {key:"iss", label:"Выпуски", type:"counter", target:2, unit:"шт"},
+    {key:"err", label:"Ошибки", type:"counter", target:50, unit:"шт"}
+  ], image:"https://i.yapx.cc/X0cI1.png", blog:"https://catwar.net/blog434004"},
 {id:"ac24", sphere:"Ачивки", subcat:"Журналисты", name:"«Зовущие за собой звёзды»", req:"Написать 12 предсказаний в роли астролога.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"counter", target:12, unit:"предсказаний", image:"https://i.yapx.cc/XrSnH.png", blog:"https://catwar.net/blog434004"},
 {id:"ac25", sphere:"Ачивки", subcat:"Журналисты", name:"«Мастер на все лапы»", req:"Сделать минимум 3 поделки для журнала.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"counter", target:3, unit:"поделок", image:"https://i.yapx.cc/X6Rw6.png", blog:"https://catwar.net/blog434004"},
 {id:"ac26", sphere:"Ачивки", subcat:"Журналисты", name:"«Камера, мотор!»", req:"Опросить 8 игроков в роли репортёра.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"counter", target:8, unit:"игроков", image:"https://i.yapx.cc/X0cJX.png", blog:"https://catwar.net/blog434004"},
-{id:"ac27", sphere:"Ачивки", subcat:"Журналисты", name:"«Опять диаграммы?»", req:"Опросить 50 игроков и составить 2 диаграммы в роли аналитика.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"toggle", image:"https://i.yapx.cc/XrSoG.png", blog:"https://catwar.net/blog434004"},
-{id:"ac28", sphere:"Ачивки", subcat:"Журналисты", name:"«Информатор»", req:"Написать 10 фактов и 3 описания к выпуску или постов в группу в роли исследователя.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"toggle", image:"https://i.yapx.cc/XrSq3.png", blog:"https://catwar.net/blog434004"},
+{id:"ac27", sphere:"Ачивки", subcat:"Журналисты", name:"«Опять диаграммы?»", req:"Опросить 50 игроков и составить 2 диаграммы в роли аналитика.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"multi",
+  items: [
+    {key:"ply", label:"Игроки", type:"counter", target:50, unit:"шт"},
+    {key:"dia", label:"Диаграммы", type:"counter", target:2, unit:"шт"}
+  ], image:"https://i.yapx.cc/XrSoG.png", blog:"https://catwar.net/blog434004"},
+{id:"ac28", sphere:"Ачивки", subcat:"Журналисты", name:"«Информатор»", req:"Написать 10 фактов и 3 описания к выпуску или постов в группу в роли исследователя.", type:"multi",
+  items: [
+    {key:"fac", label:"Факты", type:"counter", target:10, unit:"шт"},
+    {key:"des", label:"Описания/посты", type:"counter", target:3, unit:"шт"}
+  ], image:"https://i.yapx.cc/XrSq3.png", blog:"https://catwar.net/blog434004"},
 {id:"ac29", sphere:"Ачивки", subcat:"Журналисты", name:"«Игроман»", req:"Создать 6 игр и загадок суммарно.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"counter", target:6, unit:"игр и загадок", image:"https://i.yapx.cc/X4nvI.png", blog:"https://catwar.net/blog434004"},
-{id:"ac30", sphere:"Ачивки", subcat:"Журналисты", name:"«Провидец судьбы»", req:"Сделать 4 индивидуальных расклада и 2 расклада на месяц.", note:"Выдаётся по запросу у ответственных за блог Журналистов.", type:"toggle", image:"https://i.yapx.cc/ZzEfU.png", blog:"https://catwar.net/blog434004"},
+{id:"ac30", sphere:"Ачивки", subcat:"Журналисты", name:"«Провидец судьбы»", req:"Сделать 4 индивидуальных расклада и 2 расклада на месяц.", type:"multi",
+  items: [
+    {key:"ind", label:"Индивид. расклады", type:"counter", target:4, unit:"шт"},
+    {key:"mon", label:"На месяц", type:"counter", target:2, unit:"шт"}
+  ], image:"https://i.yapx.cc/ZzEfU.png", blog:"https://catwar.net/blog434004"},
 {id:"ac31", sphere:"Ачивки", subcat:"Иллюстраторы", name:"«Ювелирных дел мастер»", req:"Отрисовать 5 работ маленького разрешения (не считая работ для мероприятий).", note:"Выдаётся по запросу у ответственных за блог Художников.", type:"counter", target:5, unit:"работ", image:"https://i.yapx.cc/X0fWy.png", blog:"https://catwar.net/blog865117"},
 {id:"ac32", sphere:"Ачивки", subcat:"Иллюстраторы", name:"«Дело мастера боится»", req:"Отрисовать 5 работ большого формата.", note:"Выдаётся по запросу у ответственных за блог Художников.", type:"counter", target:5, unit:"работ", image:"https://i.yapx.cc/X0fX3.png", blog:"https://catwar.net/blog865117"},
 {id:"ac33", sphere:"Ачивки", subcat:"Иллюстраторы", name:"«Я в порядке»", req:"Отрисовать минимум 3 работы с дедлайном менее недели (не считая работ для журнала).", note:"Выдаётся по запросу у ответственных за блог Художников.", type:"counter", target:3, unit:"работ", image:"https://i.yapx.cc/X0fYM.png", blog:"https://catwar.net/blog865117"},
@@ -694,7 +747,11 @@ const MEDALS = [
 {id:"ac39", sphere:"Ачивки", subcat:"Скалолазы", name:"«Скалолаз»", req:"Посетить 40 сборов в ущелье или на уступах.", note:"Выдаётся по запросу у ответственных за блог Скалолазов.", type:"counter", target:40, unit:"сборов", image:"https://i.yapx.cc/X0cMn.png", blog:"https://catwar.net/blog1091768"},
 {id:"ac40", sphere:"Ачивки", subcat:"Скалолазы", name:"«Удачливые лапки»", req:"Собрать 15 единиц паутины со Зловонного ущелья.", note:"Выдаётся по запросу у ответственных за блог Скалолазов.", type:"counter", target:15, unit:"единиц", image:"https://i.yapx.cc/X3wY3.png", blog:"https://catwar.net/blog1091768"},
 {id:"ac41", sphere:"Ачивки", subcat:"Наблюдатели", name:"«Общий сбор»", req:"Оказать помощь во время нападения Выдры минимум 3 раза.", note:"Выдаётся по запросу у ответственных за блог Целительского уголка.", type:"counter", target:3, unit:"раз", image:"https://i.yapx.cc/X0cNF.png", blog:"https://catwar.net/blog291989"},
-{id:"ac42", sphere:"Ачивки", subcat:"Наблюдатели", name:"«Рассекающий грёзы»", req:"Доставить мох с Острова туманов в ПЦ и выполнить квест на Одиноком склоне минимум 20 раз.", note:"Выдаётся по запросу у ответственных за блог Целительского уголка.", type:"counter", target:20, unit:"раз", image:"https://i.yapx.cc/X662i.png", blog:"https://catwar.net/blog291989"},
+{id:"ac42", sphere:"Ачивки", subcat:"Наблюдатели", name:"«Рассекающий грёзы»", req:"Доставить мох с Острова туманов в ПЦ и выполнить квест на Одиноком склоне минимум 20 раз.", note:"Выдаётся по запросу у ответственных за блог Целительского уголка.", type:"multi",
+  items: [
+    {key:"mos", label:"Мох с Острова", type:"counter", target:20, unit:"раз"},
+    {key:"qst", label:"Квест на Склоне", type:"counter", target:20, unit:"раз"}
+  ], image:"https://i.yapx.cc/X662i.png", blog:"https://catwar.net/blog291989"},
 {id:"ac43", sphere:"Ачивки", subcat:"Наблюдатели", name:"«Под прикрытием»", req:"Посетить минимум 20 травников в рамках отрядного задания.", note:"Выдаётся по запросу у ответственных за блог Целительского уголка.", type:"counter", target:20, unit:"травников", image:"https://i.yapx.cc/X0cOX.png", blog:"https://catwar.net/blog291989"},
 {id:"ac44", sphere:"Ачивки", subcat:"Озорники", name:"«Заядлый игрок»", req:"Организовать 70 и более игр для котят.", note:"Выдаётся по запросу у ответственных за блог Мастеров игр.", type:"counter", target:70, unit:"игр", image:"https://i.yapx.cc/XrSzE.png", blog:"https://catwar.net/blog14909"},
 {id:"ac45", sphere:"Ачивки", subcat:"Озорники", name:"«Вместе по следам букашек»", req:"Получить 15 баллов за работу над Детскими Охотничьими Турнирами (для Озорников и Затейников).", note:"Выдаётся по запросу у ответственных за блоги Мастеров игр и Заданий для малышей.", type:"counter", target:15, unit:"баллов", image:"https://i.yapx.ru/ZzFPo.png", blog:"https://catwar.net/blog14909"},
@@ -703,15 +760,28 @@ const MEDALS = [
 {id:"ac48", sphere:"Ачивки", subcat:"Сорванцы", name:"«Мечтательный лягушонок»", req:"Выполнить 20 постоянных заданий в команде Лягушат.", note:"Выдаётся по запросу у ответственных за блог Заданий для малышей.", type:"counter", target:20, unit:"заданий", image:"https://i.yapx.cc/X0cPg.png", blog:"https://catwar.net/blog1043001"},
 {id:"ac49", sphere:"Ачивки", subcat:"Затейники", name:"«Проводник во взрослую жизнь»", req:"Собрать 30 и более ДП (для Озорников и Затейников).", note:"Выдаётся по запросу у ответственных за блоги Мастеров игр и Заданий для малышей.", type:"counter", target:30, unit:"ДП", image:"https://i.yapx.cc/X6R2j.png", blog:"https://catwar.net/blog14909"},
 {id:"ac50", sphere:"Ачивки", subcat:"Затейники", name:"«Творящий детство»", req:"Набрать 30 баллов за новые задания.", note:"Выдаётся по запросу у ответственных за блог Заданий для малышей.", type:"counter", target:30, unit:"баллов", image:"https://i.yapx.cc/X6XO7.png", blog:"https://catwar.net/blog1043001"},
-{id:"ac51", sphere:"Ачивки", subcat:"Затейники", name:"«Дело горит в лапках»", req:"5 раз составить расписание недельных заданий и набрать 30 баллов за работу с таблицами.", note:"Выдаётся по запросу у ответственных за блог Заданий для малышей.", type:"toggle", image:"https://i.yapx.cc/X6XPK.png", blog:"https://catwar.net/blog1043001"},
-{id:"ac52", sphere:"Ачивки", subcat:"Затейники", name:"«Лапа помощи»", req:"Набрать 60 баллов за слежку за Сорванцами и 5 раз внести отчёты котят.", note:"Выдаётся по запросу у ответственных за блог Заданий для малышей.", type:"toggle", image:"https://i.yapx.cc/X6XRD.png", blog:"https://catwar.net/blog1043001"},
+{id:"ac51", sphere:"Ачивки", subcat:"Затейники", name:"«Дело горит в лапках»", req:"5 раз составить расписание недельных заданий и набрать 30 баллов за работу с таблицами.", note:"Выдаётся по запросу у ответственных за блог Заданий для малышей.", type:"multi",
+  items: [
+    {key:"sch", label:"Расписания", type:"counter", target:5, unit:"шт"},
+    {key:"pts", label:"Баллы (таблицы)", type:"counter", target:30, unit:"баллов"}
+  ], image:"https://i.yapx.cc/X6XPK.png", blog:"https://catwar.net/blog1043001"},
+{id:"ac52", sphere:"Ачивки", subcat:"Затейники", name:"«Лапа помощи»", req:"Набрать 60 баллов за слежку за Сорванцами и 5 раз внести отчёты котят.", note:"Выдаётся по запросу у ответственных за блог Заданий для малышей.", type:"multi",
+  items: [
+    {key:"pts", label:"Баллы", type:"counter", target:60, unit:"баллов"},
+    {key:"rep", label:"Отчёты", type:"counter", target:5, unit:"шт"}
+  ], image:"https://i.yapx.cc/X6XRD.png", blog:"https://catwar.net/blog1043001"},
 {id:"ac53", sphere:"Ачивки", subcat:"Вожатые", name:"«С ветки на ветку»", req:"Провести 60 и более часов с Храбрецами на лазательных локациях.", note:"Выдаётся по запросу у ответственных за блог О навыках котятам.", type:"counter", target:60, unit:"часов", image:"https://i.yapx.cc/XrS3A.png", blog:"https://catwar.net/blog562586"},
 {id:"ac54", sphere:"Ачивки", subcat:"Вожатые", name:"«Не бойся глубины»", req:"Совершить 60 и более походов с Храбрецами на дно для ныряния.", note:"Выдаётся по запросу у ответственных за блог О навыках котятам.", type:"counter", target:60, unit:"походов", image:"https://i.yapx.cc/XrS4c.png", blog:"https://catwar.net/blog562586"},
 {id:"ac55", sphere:"Ачивки", subcat:"Речные звёздочки", name:"«Премия за смелость в журналистике»", req:"Собрать 70 поздравлений для именинников (для корреспондентов).", note:"Выдаётся по запросу у ответственных за блог Поздравителей.", type:"counter", target:70, unit:"поздравлений", image:"https://i.yapx.cc/X1OBJ.png", blog:"https://catwar.net/blog47872"},
-{id:"ac56", sphere:"Ачивки", subcat:"Речные звёздочки", name:"«Рисуя млечный путь»", req:"Нарисовать 7 шапок и 10 рисунков для блогов именинников (для художников).", note:"Выдаётся по запросу у ответственных за блог Поздравителей.", type:"toggle", image:"https://i.yapx.cc/X1OEW.png", blog:"https://catwar.net/blog47872"},
+{id:"ac56", sphere:"Ачивки", subcat:"Речные звёздочки", name:"«Рисуя млечный путь»", req:"Нарисовать 7 шапок и 10 рисунков для блогов именинников (для художников).", note:"Выдаётся по запросу у ответственных за блог Поздравителей.", type:"multi",
+  items: [
+    {key:"hed", label:"Шапки", type:"counter", target:7, unit:"шт"},
+    {key:"art", label:"Рисунки", type:"counter", target:10, unit:"шт"}
+  ], image:"https://i.yapx.cc/X1OEW.png", blog:"https://catwar.net/blog47872"},
 {id:"ac57", sphere:"Ачивки", subcat:"Речные звёздочки", name:"«Креативный инженер»", req:"Создать не менее 10 блогов с уникальным оформлением (для программистов).", note:"Выдаётся по запросу у ответственных за блог Поздравителей.", type:"counter", target:10, unit:"блогов", image:"https://i.yapx.cc/X1OE7.png", blog:"https://catwar.net/blog47872"},
 {id:"ac58", sphere:"Ачивки", subcat:"Речные звёздочки", name:"«Он показал новый мир»", req:"Создать 10 легенд, из которых хотя бы 2 — интерактивные (для писателей).", note:"Выдаётся по запросу у ответственных за блог Поздравителей.", type:"toggle", image:"https://i.yapx.cc/X1OHS.png", blog:"https://catwar.net/blog47872"},
 ];
+
 const SPHERES = [...new Set(MEDALS.map(m=>m.sphere))];
 const MEDAL_SPHERES = SPHERES.filter(s=>s!=="Ачивки");
 const ACH_SPHERE = "Ачивки";
@@ -724,45 +794,74 @@ const VIEWS = [
   {id:"stats", label:"Статистика"},
   {id:"tribe", label:"Соплеменники"},
 ];
-let progress = {};   // {id: {value, done, selectedVariant, variants:[{value,done}, ...]}}
-let images = {};     // {id: imageUrl} — пользовательские замены картинок медалей
+let progress = {};
+let images = {};
 let profile = {name:"", role:"", icon:"paw", avatarImage:"", notes:"", shareEnabled:false};
-let modalAvatarImage = ""; // черновик картинки, пока модалка открыта
+let modalAvatarImage = "";
+
 function avatarInner(entity){
   if(entity && entity.avatarImage) return `<img src="${escapeHTML(entity.avatarImage)}" alt="" referrerpolicy="no-referrer">`;
   return iconSVG((entity && entity.icon) || "paw");
 }
-let goals = {};       // {id: true} — план
+let goals = {};
 let currentView = "medals";
 let medalsSearchQuery = "";
-let medalsFilterMode = "all"; // all | earned | unearned
-let medalsSphereFilter = "all"; // all | конкретная сфера
+let medalsFilterMode = "all";
+let medalsSphereFilter = "all";
 let achSearchQuery = "";
-let achFilterMode = "all"; // all | earned | unearned
-let achSubcatFilter = "all"; // all | конкретная категория ачивок
+let achFilterMode = "all";
+let achSubcatFilter = "all";
 let plannerSearchQuery = "";
 let memberId = null;
-/* ---------- Варианты получения ---------- */
-function variantEarned(m, idx){
-  const v = m.variants[idx];
-  const p = progress[m.id] || {};
-  const vp = (p.variants && p.variants[idx]) || {};
-  if(v.type==="toggle") return !!vp.done;
-  return (vp.value||0) >= v.target;
+
+/* ---------- Мульти-требования логика ---------- */
+function checkMulti(items, dataObj) {
+   if(!dataObj) return false;
+   return items.every(it => {
+      if (it.type === "toggle") return !!dataObj[it.key];
+      return (dataObj[it.key] || 0) >= it.target;
+   });
+}
+function variantEarned(m, idx) {
+   const v = m.variants[idx];
+   const p = progress[m.id] || {};
+   const vp = (p.variants && p.variants[idx]) || {};
+   if (v.type === "multi") return checkMulti(v.items, vp.multi);
+   if (v.type === "toggle") return !!vp.done;
+   return (vp.value || 0) >= v.target;
 }
 function selectedVariantIndex(m){
   const p = progress[m.id] || {};
   if(p.selectedVariant!=null && m.variants[p.selectedVariant]) return p.selectedVariant;
-  // по умолчанию — первый ещё не выполненный вариант, иначе первый
   const firstUnfinished = m.variants.findIndex((v,i)=>!variantEarned(m,i));
   return firstUnfinished>=0 ? firstUnfinished : 0;
 }
 function isEarned(m){
-  if(m.variants) return m.variants.some((v,i)=>variantEarned(m,i));
+  if (m.variants) return m.variants.some((v,i)=>variantEarned(m,i));
   const p = progress[m.id] || {};
-  if(m.type==="toggle") return !!p.done;
-  return (p.value||0) >= m.target;
+  if (m.type === "multi") return checkMulti(m.items, p.multi);
+  if (m.type === "toggle") return !!p.done;
+  return (p.value || 0) >= m.target;
 }
+function calcPct(type, target, items, valObj) {
+  if (type === "toggle") return valObj?.done ? 100 : 0;
+  if (type === "counter") return Math.min(100, Math.round(((valObj?.value)||0)/target*100));
+  if (type === "multi") {
+      if(!items || !items.length) return 0;
+      let totalPct = 0;
+      items.forEach(it => {
+          if(it.type === "toggle") {
+              totalPct += (valObj?.multi?.[it.key] ? 100 : 0);
+          } else {
+              let v = valObj?.multi?.[it.key] || 0;
+              totalPct += Math.min(100, (v/it.target)*100);
+          }
+      });
+      return Math.round(totalPct / items.length);
+  }
+  return 0;
+}
+
 function sphereStats(sphere){
   const list = MEDALS.filter(m=>m.sphere===sphere);
   const earned = list.filter(isEarned).length;
@@ -770,7 +869,7 @@ function sphereStats(sphere){
 }
 function matchesFilter(m, state){
   const q = state.query.trim().toLowerCase();
-  const haystack = (m.req||"") + " " + (m.variants? m.variants.map(v=>v.req).join(" ") : "");
+  const haystack = (m.req||"") + " " + (m.variants? m.variants.map(v=>v.req||"").join(" ") : "");
   if(q && !m.name.toLowerCase().includes(q) && !haystack.toLowerCase().includes(q)) return false;
   if(state.filterMode==="earned" && !isEarned(m)) return false;
   if(state.filterMode==="unearned" && isEarned(m)) return false;
@@ -789,32 +888,7 @@ function bindSearchInput(id, setter, onRender){
     if(el2){ el2.focus(); el2.setSelectionRange(selStart, selStart); }
   });
 }
-async function applyCounterValue(id, v){
-  const medal = MEDALS.find(x=>x.id===id);
-  if(!medal) return;
-  const wasEarned = isEarned(medal);
-  progress[id] = progress[id]||{};
-  progress[id].value = v;
-  const nowEarned = isEarned(medal);
-  await saveProgress();
-  await updateSharedEntry();
-  renderAll();
-  if(!wasEarned && nowEarned) pulseCard(id);
-}
-async function applyVariantCounterValue(id, vIdx, val){
-  const medal = MEDALS.find(x=>x.id===id);
-  if(!medal) return;
-  const wasEarned = isEarned(medal);
-  progress[id] = progress[id]||{};
-  progress[id].variants = progress[id].variants||[];
-  progress[id].variants[vIdx] = progress[id].variants[vIdx]||{};
-  progress[id].variants[vIdx].value = val;
-  const nowEarned = isEarned(medal);
-  await saveProgress();
-  await updateSharedEntry();
-  renderAll();
-  if(!wasEarned && nowEarned) pulseCard(id);
-}
+
 function pulseCard(id){
   const slot = document.querySelector(`.medal-slot[data-id="${id}"]`);
   const card = slot ? slot.closest(".card") : null;
@@ -849,7 +923,7 @@ function renderQuickjump(spheresToShow){
     </button>`;
   }).join("")}</div>`;
 }
-/* ---------- Красивый чекбокс «получено» ---------- */
+
 function toggleCheckHTML(id, checked, cls, variantIdx){
   const dataAttrs = variantIdx!=null ? `data-id="${id}" data-variant="${variantIdx}"` : `data-id="${id}"`;
   return `<label class="toggle-check ${checked?"checked":""}">
@@ -858,7 +932,55 @@ function toggleCheckHTML(id, checked, cls, variantIdx){
     <span class="txt">${checked? "Получено" : "Отметить как полученное"}</span>
   </label>`;
 }
-/* ---------- Medal card markup (shared by list view) ---------- */
+
+/* Отрисовка полей для составных требований (multi) в одну строку */
+function renderMultiControls(items, mId, vIdx, valData) {
+  let totalPct = 0;
+  if (items && items.length) {
+     items.forEach(it => {
+        if (it.type === "toggle") {
+           totalPct += (valData?.[it.key] ? 100 : 0);
+        } else {
+           let v = valData?.[it.key] || 0;
+           totalPct += Math.min(100, (v/it.target)*100);
+        }
+     });
+     totalPct = Math.round(totalPct / items.length);
+  }
+  
+  const inputsHTML = items.map(it => {
+     let val = valData?.[it.key];
+     if (it.type === "toggle") {
+         val = !!val;
+         return `<div style="display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">${it.label}</span>
+            <label class="multi-check toggle-check ${val?"checked":""}" style="margin:0; padding:4px 8px; min-height:28px;">
+               <input type="checkbox" data-id="${mId}" data-variant="${vIdx!=null?vIdx:""}" data-mkey="${it.key}" class="multi-toggle-input" ${val?"checked":""}>
+               <span class="check-icon" style="width:16px; height:16px; border-width:1px;"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 4.5"/></svg></span>
+               <span class="txt" style="font-size:12px;">Сделано</span>
+            </label>
+         </div>`;
+     } else {
+         val = val || 0;
+         return `<div style="display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">${it.label}</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+               <input type="number" min="0" value="${val}" data-id="${mId}" data-variant="${vIdx!=null?vIdx:""}" data-mkey="${it.key}" class="multi-counter-input">
+               <span class="of-target mono">/ ${it.target} ${it.unit||""}</span>
+            </div>
+         </div>`;
+     }
+  }).join("");
+
+  return `<div class="multi-reqs" style="margin-top:10px;">
+     <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; margin-bottom:12px;">
+        ${inputsHTML}
+     </div>
+     <div class="mini-track"><div class="mini-fill" style="width:${totalPct}%;"></div></div>
+  </div>`;
+}
+
+/* ---------- Medal card markup ---------- */
 function cardHTML(m){
   const earned = isEarned(m);
   const imgUrl = images[m.id] || m.image || "";
@@ -878,15 +1000,15 @@ function cardHTML(m){
         return `<button type="button" class="variant-tab ${i===selIdx?"active":""} ${ve?"done":""}" data-id="${m.id}" data-variant="${i}">${ve?"✓ ":""}${escapeHTML(vv.label)}</button>`;
       }).join("")}</div>`;
     let controlHTML;
-    if(v.type==="counter"){
+    if(v.type==="multi"){
+      controlHTML = renderMultiControls(v.items, m.id, selIdx, vp.multi);
+    } else if(v.type==="counter"){
       const val = vp.value||0;
       const pct = Math.min(100, Math.round(val/v.target*100));
       controlHTML = `
         <div class="control-row">
           <div class="num-wrap">
-            <button type="button" class="step-btn variant-step-btn" data-id="${m.id}" data-variant="${selIdx}" data-dir="-1">−</button>
             <input type="number" min="0" value="${val}" data-id="${m.id}" data-variant="${selIdx}" class="variant-counter-input">
-            <button type="button" class="step-btn variant-step-btn" data-id="${m.id}" data-variant="${selIdx}" data-dir="1">+</button>
             <span class="of-target mono">/ ${v.target} ${v.unit||""}</span>
           </div>
         </div>
@@ -900,6 +1022,12 @@ function cardHTML(m){
       ${tabsHTML}
       ${controlHTML}
     `;
+  } else if(m.type==="multi"){
+    reqText = m.req;
+    const p = progress[m.id] || {};
+    bodyHTML = `
+      ${m.note? `<div class="note">${m.note}</div>`:""}
+      ${renderMultiControls(m.items, m.id, null, p.multi)}`;
   } else if(m.type==="counter"){
     reqText = m.req;
     const p = progress[m.id] || {value:0};
@@ -909,9 +1037,7 @@ function cardHTML(m){
       ${m.note? `<div class="note">${m.note}</div>`:""}
       <div class="control-row">
         <div class="num-wrap">
-          <button type="button" class="step-btn" data-id="${m.id}" data-dir="-1">−</button>
           <input type="number" min="0" value="${val}" data-id="${m.id}" class="progress-input">
-          <button type="button" class="step-btn" data-id="${m.id}" data-dir="1">+</button>
           <span class="of-target mono">/ ${m.target} ${m.unit||""}</span>
         </div>
       </div>
@@ -949,7 +1075,8 @@ function cardHTML(m){
     ${bodyHTML}
   </div>`;
 }
-/* ---------- Общие обработчики карточек (переиспользуются на всех вкладках) ---------- */
+
+/* ---------- Общие обработчики карточек ---------- */
 function attachCardControlListeners(root){
   if(!root) return;
   root.querySelectorAll(".progress-input").forEach(inp=>{
@@ -957,17 +1084,77 @@ function attachCardControlListeners(root){
       const id = e.target.dataset.id;
       let v = parseFloat(e.target.value);
       if(isNaN(v)||v<0) v = 0;
-      await applyCounterValue(id, v);
+      const medal = MEDALS.find(x=>x.id===id);
+      const wasEarned = isEarned(medal);
+      progress[id] = progress[id]||{};
+      progress[id].value = v;
+      const nowEarned = isEarned(medal);
+      await saveProgress();
+      await updateSharedEntry();
+      renderAll();
+      if(!wasEarned && nowEarned) pulseCard(id);
     });
   });
-  root.querySelectorAll(".step-btn:not(.variant-step-btn)").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      const id = btn.dataset.id;
-      const dir = parseFloat(btn.dataset.dir);
-      const current = (progress[id] && progress[id].value) || 0;
-      await applyCounterValue(id, Math.max(0, current + dir));
-    });
+  
+  root.querySelectorAll(".multi-counter-input").forEach(inp=>{
+     inp.addEventListener("change", async (e)=>{
+         const id = e.target.dataset.id;
+         const vIdxStr = e.target.dataset.variant;
+         const mkey = e.target.dataset.mkey;
+         let v = parseFloat(e.target.value);
+         if(isNaN(v)||v<0) v = 0;
+
+         const medal = MEDALS.find(x=>x.id===id);
+         const wasEarned = isEarned(medal);
+
+         progress[id] = progress[id]||{};
+         if (vIdxStr !== "") {
+             const vIdx = parseInt(vIdxStr, 10);
+             progress[id].variants = progress[id].variants||[];
+             progress[id].variants[vIdx] = progress[id].variants[vIdx]||{};
+             progress[id].variants[vIdx].multi = progress[id].variants[vIdx].multi||{};
+             progress[id].variants[vIdx].multi[mkey] = v;
+         } else {
+             progress[id].multi = progress[id].multi||{};
+             progress[id].multi[mkey] = v;
+         }
+         const nowEarned = isEarned(medal);
+         await saveProgress();
+         await updateSharedEntry();
+         renderAll();
+         if(!wasEarned && nowEarned) pulseCard(id);
+     });
   });
+
+  root.querySelectorAll(".multi-toggle-input").forEach(chk=>{
+     chk.addEventListener("change", async (e)=>{
+         const id = e.target.dataset.id;
+         const vIdxStr = e.target.dataset.variant;
+         const mkey = e.target.dataset.mkey;
+         const val = e.target.checked;
+
+         const medal = MEDALS.find(x=>x.id===id);
+         const wasEarned = isEarned(medal);
+
+         progress[id] = progress[id]||{};
+         if (vIdxStr !== "") {
+             const vIdx = parseInt(vIdxStr, 10);
+             progress[id].variants = progress[id].variants||[];
+             progress[id].variants[vIdx] = progress[id].variants[vIdx]||{};
+             progress[id].variants[vIdx].multi = progress[id].variants[vIdx].multi||{};
+             progress[id].variants[vIdx].multi[mkey] = val;
+         } else {
+             progress[id].multi = progress[id].multi||{};
+             progress[id].multi[mkey] = val;
+         }
+         const nowEarned = isEarned(medal);
+         await saveProgress();
+         await updateSharedEntry();
+         renderAll();
+         if(!wasEarned && nowEarned) pulseCard(id);
+     });
+  });
+
   root.querySelectorAll(".progress-toggle").forEach(chk=>{
     chk.addEventListener("change", async (e)=>{
       const id = e.target.dataset.id;
@@ -999,18 +1186,18 @@ function attachCardControlListeners(root){
       const vIdx = parseInt(e.target.dataset.variant, 10);
       let v = parseFloat(e.target.value);
       if(isNaN(v)||v<0) v = 0;
-      await applyVariantCounterValue(id, vIdx, v);
-    });
-  });
-  root.querySelectorAll(".variant-step-btn").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      const id = btn.dataset.id;
-      const vIdx = parseInt(btn.dataset.variant, 10);
-      const dir = parseFloat(btn.dataset.dir);
-      const p = progress[id]||{};
-      const vp = (p.variants && p.variants[vIdx]) || {};
-      const current = vp.value||0;
-      await applyVariantCounterValue(id, vIdx, Math.max(0, current + dir));
+      
+      const medal = MEDALS.find(x=>x.id===id);
+      const wasEarned = isEarned(medal);
+      progress[id] = progress[id]||{};
+      progress[id].variants = progress[id].variants||[];
+      progress[id].variants[vIdx] = progress[id].variants[vIdx]||{};
+      progress[id].variants[vIdx].value = v;
+      const nowEarned = isEarned(medal);
+      await saveProgress();
+      await updateSharedEntry();
+      renderAll();
+      if(!wasEarned && nowEarned) pulseCard(id);
     });
   });
   root.querySelectorAll(".variant-toggle").forEach(chk=>{
@@ -1089,7 +1276,7 @@ function attachPinButtons(root){
     });
   });
 }
-/* ---------- Медали view (единый список по сферам, без бокового меню) ---------- */
+/* ---------- Медали view ---------- */
 function renderMedals(){
   const wrap = document.getElementById("medalsList");
   const state = {query:medalsSearchQuery, filterMode:medalsFilterMode, sphereFilter:medalsSphereFilter};
@@ -1162,7 +1349,7 @@ function attachMedalsListeners(){
   });
   attachCardControlListeners(document.getElementById("medalsList"));
 }
-/* ---------- Ачивки view (аналогично «Медалям», но по категориям ачивок) ---------- */
+/* ---------- Ачивки view ---------- */
 function achAnchor(subcat){
   return "ach-" + subcat.replace(/[^a-zа-яё0-9]+/gi,"-");
 }
@@ -1249,18 +1436,19 @@ function renderPlanner(){
       const v = m.variants[selIdx];
       const p = progress[m.id]||{};
       const vp = (p.variants && p.variants[selIdx]) || {};
-      pct = v.type==="toggle" ? (vp.done?100:0) : Math.min(100, Math.round((vp.value||0)/v.target*100));
+      pct = calcPct(v.type, v.target, v.items, vp);
     } else {
       const p = progress[m.id]||{};
-      pct = m.type==="toggle" ? (p.done?100:0) : Math.min(100, Math.round((p.value||0)/m.target*100));
+      pct = calcPct(m.type, m.target, m.items, p);
     }
     return {m, pct};
   }).sort((a,b)=>b.pct-a.pct);
+  
   const planHTML = withPct.length
     ? withPct.map(({m})=> cardHTML(m)).join("")
     : `<p class="empty-hint">Пока пусто. Найди награду через поиск выше или отметь звёздочкой на вкладке «Медали» — она появится здесь с полной карточкой и прогрессом.</p>`;
   const q = plannerSearchQuery.trim().toLowerCase();
-  const suggestions = q ? MEDALS.filter(m=>!goals[m.id] && (m.name.toLowerCase().includes(q) || (m.req||"").toLowerCase().includes(q) || (m.variants&&m.variants.some(v=>v.req.toLowerCase().includes(q))))).slice(0,12) : [];
+  const suggestions = q ? MEDALS.filter(m=>!goals[m.id] && (m.name.toLowerCase().includes(q) || (m.req||"").toLowerCase().includes(q) || (m.variants&&m.variants.some(v=>v.req?.toLowerCase().includes(q))))).slice(0,12) : [];
   const suggestionsHTML = suggestions.length ? `
     <div class="planner-suggestions">
       ${suggestions.map(m=>`
@@ -1318,11 +1506,19 @@ function renderStats(){
   }).join("");
   const nearest = MEDALS.filter(m=>{
       if(m.variants || isEarned(m)) return false;
-      if(m.type!=="counter") return false;
-      return (progress[m.id]?.value||0)>0;
+      if(m.type==="toggle") return false;
+      if(m.type==="counter" && (progress[m.id]?.value||0)>0) return true;
+      if(m.type==="multi"){
+         return m.items.some(it => {
+             if (it.type==="toggle") return progress[m.id]?.multi?.[it.key];
+             return (progress[m.id]?.multi?.[it.key] || 0) > 0;
+         });
+      }
+      return false;
     })
-    .map(m=>({m, pct: Math.min(100, Math.round((progress[m.id].value||0)/m.target*100))}))
+    .map(m=>({m, pct: calcPct(m.type, m.target, m.items, progress[m.id]||{})}))
     .sort((a,b)=>b.pct-a.pct).slice(0,5);
+    
   const nearestHTML = nearest.length ? nearest.map(({m,pct})=>`
     <div class="nearest-item">
       <span class="nearest-name">${m.name}</span>
@@ -1435,7 +1631,7 @@ async function generateProgressCard(){
       ctx.drawImage(img, boxX + (boxW-dw)/2, boxY + (boxH-dh)/2, dw, dh);
       ctx.restore();
       avatarDrawn = true;
-    }catch(e){ /* картинка не загрузилась (например, ссылка недоступна для холста) — рисуем карточку без неё */ }
+    }catch(e){}
   }
   let y = avatarDrawn ? 52+220+50 : 90;
   ctx.textAlign = "center";
@@ -1538,10 +1734,10 @@ async function loadAndRenderTribe(){
     try{
       const r = await window.storage.get(k, true);
       if(r && r.value) members.push(JSON.parse(r.value));
-    }catch(e){ /* пропускаем битую запись */ }
+    }catch(e){ }
   }
   members.sort((a,b)=>(b.earned||0)-(a.earned||0));
-  if(currentView!=="tribe") return; // пользователь мог уйти со вкладки, пока шёл запрос
+  if(currentView!=="tribe") return;
   if(!members.length){
     wrap.innerHTML = `<p class="empty-hint">Пока никто не поделился прогрессом. Будь первой!</p>`;
     return;
@@ -1576,7 +1772,7 @@ async function copyProfileLink(){
     window.alert("Сначала включи «Показывать мой прогресс соплеменникам» выше — иначе по ссылке ничего не будет видно.");
     return;
   }
-  await updateSharedEntry(); // на случай если ещё не сохранялось с текущим прогрессом
+  await updateSharedEntry();
   const link = buildProfileLink();
   try{
     await navigator.clipboard.writeText(link);
@@ -1637,8 +1833,7 @@ function renderAll(){
   document.getElementById("view-planner").style.display = currentView==="planner" ? "block" : "none";
   document.getElementById("view-stats").style.display = currentView==="stats" ? "block" : "none";
   document.getElementById("view-tribe").style.display = currentView==="tribe" ? "block" : "none";
-  // Карточки медалей (с одинаковыми id) могут отображаться и в «Медалях»/«Ачивках», и в «Планировщике» —
-  // очищаем неактивные вкладки, чтобы в документе не было задвоенных id одновременно.
+  
   if(currentView!=="medals") document.getElementById("medalsList").innerHTML = "";
   if(currentView!=="achievements") document.getElementById("achievementsList").innerHTML = "";
   if(currentView!=="planner") document.getElementById("view-planner").innerHTML = "";
@@ -1681,7 +1876,7 @@ async function loadAll(){
   try{
     const res2 = await window.storage.get("river-medals-profile");
     if(res2 && res2.value) profile = Object.assign({name:"", role:"", icon:"paw", notes:"", shareEnabled:false}, JSON.parse(res2.value));
-  }catch(e){ /* keep defaults */ }
+  }catch(e){ }
   try{
     const res3 = await window.storage.get("river-medals-images");
     if(res3 && res3.value) images = JSON.parse(res3.value);
@@ -1791,7 +1986,7 @@ document.getElementById("saveModal").onclick = async ()=>{
   if(profile.shareEnabled){
     await updateSharedEntry();
   } else if(wasShared && memberId){
-    try{ await window.storage.delete(`member:${memberId}`, true); }catch(e){ /* уже удалено или не найдено */ }
+    try{ await window.storage.delete(`member:${memberId}`, true); }catch(e){ }
   }
   renderProfileChip();
   modalBackdrop.classList.remove("open");
@@ -1804,7 +1999,7 @@ document.getElementById("closeSharedProfile").addEventListener("click", ()=>{
     const url = new URL(window.location.href);
     url.searchParams.delete("member");
     window.history.replaceState(null, "", url.toString());
-  }catch(e){ /* URL API может быть недоступен в песочнице — не критично */ }
+  }catch(e){ }
 });
 loadAll().then(checkSharedProfileLink);
 </script>
