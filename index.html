@@ -541,6 +541,27 @@
 <div class="save-flag" id="saveFlag">✓ сохранено</div>
 
 <script>
+// --- ДОБАВЛЕНО: Сохранение в браузере (localStorage) ---
+if (!window.storage) {
+  window.storage = {
+    get: async (key) => {
+      let v = localStorage.getItem(key);
+      return v ? { value: v } : null;
+    },
+    set: async (key, value) => localStorage.setItem(key, value),
+    delete: async (key) => localStorage.removeItem(key),
+    list: async (prefix) => {
+      let keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        let k = localStorage.key(i);
+        if (k.startsWith(prefix)) keys.push(k);
+      }
+      return { keys };
+    }
+  };
+}
+// ---------------------------------------------------------
+
 const ICONS = {
   paw: `M32 34c9 0 18 8 18 17 0 6-5 9-11 9-4 0-6-2-7-2s-3 2-7 2c-6 0-11-3-11-9 0-9 9-17 18-17z
     M14 30c4 0 7-4 7-9s-3-9-7-9-7 4-7 9 3 9 7 9z
