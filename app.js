@@ -72,13 +72,12 @@ function initAuthUI() {
   function updateModeUI() {
     clearError(); clearInfo();
     if (authMode === "login") {
-      titleEl.textContent = "Вход в Течение";
-      hintEl.textContent = "Войди, чтобы сохранять свой прогресс наград в облаке.";
+      titleEl.textContent = "Вход";
       btnSubmit.textContent = "Войти";
-      btnToggle.textContent = "Ещё нет аккаунта? Зарегистрироваться";
+      btnToggle.textContent = "Зарегистрироваться";
     } else {
       titleEl.textContent = "Регистрация";
-      hintEl.textContent = "Придумай пароль (от 6 символов) — он привяжется к твоей почте.";
+      hintEl.textContent = "Придумай пароль";
       btnSubmit.textContent = "Зарегистрироваться";
       btnToggle.textContent = "Уже есть аккаунт? Войти";
     }
@@ -105,7 +104,7 @@ function initAuthUI() {
         const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
         if (!userCred.user.emailVerified) {
           await firebase.auth().signOut();
-          showError('Почта не подтверждена! Найди письмо от нас (проверь Спам) и перейди по ссылке внутри.');
+          showError('Почта не подтверждена! Найди письмо (проверь «Спам») и перейди по ссылке');
         }
       } else {
         const userCred = await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -113,8 +112,7 @@ function initAuthUI() {
         await firebase.auth().signOut();
         showInfo('На твою почту отправлено письмо. Найди его (проверь папку «Спам») и нажми на ссылку, чтобы активировать аккаунт. После этого возвращайся сюда');
         authMode = "login";
-        titleEl.textContent = "Вход в Течение";
-        hintEl.textContent = "Войди, чтобы сохранять свой прогресс наград в облаке.";
+        titleEl.textContent = "Вход";
         btnSubmit.textContent = "Войти";
         btnToggle.textContent = "Ещё нет аккаунта? Зарегистрироваться";
       }
@@ -186,10 +184,10 @@ function initLocalAuthUI() {
 function translateAuthError(err) {
   const map = {
     'auth/invalid-email': 'Некорректный email.',
-    'auth/user-not-found': 'Аккаунт не найден. Переключитесь на регистрацию.',
+    'auth/user-not-found': 'Аккаунт не найден.',
     'auth/wrong-password': 'Неверный пароль.',
     'auth/invalid-credential': 'Неверный email или пароль.',
-    'auth/email-already-in-use': 'Этот email уже зарегистрирован. Выберите "Войти".',
+    'auth/email-already-in-use': 'Этот email уже зарегистрирован. Выберите «Войти».',
     'auth/weak-password': 'Пароль слишком простой (нужно минимум 6 символов).',
     'auth/too-many-requests': 'Слишком много попыток. Подождите пару минут.',
   };
