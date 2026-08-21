@@ -125,7 +125,7 @@ h1.title { font-size: 42px; margin: 0 0 12px; color: var(--gold); letter-spacing
 .quickjump { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
 .quickjump-btn {
   display: flex; align-items: center; justify-content: center; gap: 7px;
-  flex: 1 1 180px; /* Делает все кнопки одинаковой минимальной ширины */
+  flex: 1 1 180px; 
   background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 8px 12px; cursor: pointer; color: var(--text-muted);
   font-family: 'PT Mono', monospace; font-size: 11.5px; transition: background .2s, color .2s, border-color .2s;
@@ -397,3 +397,201 @@ input[type=number] { -moz-appearance: textfield; }
 
 .save-flag { font-family: 'PT Mono', monospace; font-size: 10.5px; color: var(--moss); position: fixed; bottom: 14px; right: 16px; opacity: 0; transition: opacity .4s; z-index: 60; }
 .save-flag.show { opacity: 1; }
+
+@media (max-width: 768px) {
+  body {
+    padding: 0 !important;
+  }
+
+  header {
+    padding: 24px 14px 16px !important;
+  }
+
+  h1.title {
+    font-size: 30px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .subtitle {
+    font-size: 13px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .overview {
+    gap: 16px !important;
+  }
+
+  .view-tabs {
+    padding: 12px 10px 0 !important;
+    gap: 6px !important;
+  }
+
+  .view-tab {
+    flex: 1 1 calc(50% - 6px) !important;
+    padding: 8px 10px !important;
+    font-size: 12.5px !important;
+  }
+
+  .view-section, main.medals {
+    margin: 10px 8px 0 !important;
+    padding: 14px 12px !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .quickjump {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 6px !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 14px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .quickjump::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quickjump-btn {
+    flex: 0 0 auto !important;
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+  }
+
+  .sphere-header {
+    gap: 12px !important;
+    margin-bottom: 12px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .sphere-header-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .sphere-header-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .sphere-header-title {
+    font-size: 20px !important;
+  }
+
+  .card {
+    padding: 12px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .medal-slot {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .medal-name {
+    font-size: 14.5px !important;
+  }
+
+  .control-row {
+    gap: 8px !important;
+  }
+
+  .progress-input, .variant-counter-input, .multi-counter-input, .hm-hours, .hm-minutes {
+    width: 46px !important;
+    font-size: 12px !important;
+    padding: 4px !important;
+  }
+
+  .toggle-check {
+    padding: 8px 10px !important;
+    gap: 8px !important;
+  }
+
+  .toggle-check .check-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .toggle-check .txt {
+    font-size: 12.5px !important;
+  }
+
+  .status-actions {
+    gap: 6px !important;
+  }
+
+  .status-btn {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .filter-bar {
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .filter-bar input[type=text], .filter-bar select {
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+  }
+  .card-top {
+    display: flex !important;
+    align-items: flex-start !important;
+    position: relative !important;
+    gap: 10px !important;
+  }
+
+  .card-top-text {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .card-top-text-row {
+    display: block !important;
+  }
+
+  .card-top-badges {
+    position: absolute !important;
+    top: 38px !important; 
+    right: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 4px !important;
+  }
+
+  .card-top-text {
+    padding-right: 65px !important;
+  }
+
+  .badge-status {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+    white-space: nowrap !important;
+  }
+
+  .badge-variant {
+    font-size: 8.5px !important;
+    padding: 1px 5px !important;
+  }
+}
+
+header {
+  position: relative !important;
+}
+
+.header-inner {
+  position: relative;
+}
+
+.domain-switch {
+  position: absolute;
+  top: -25px;
+  right: 0;
+  margin: 0 !important;
+  z-index: 10;
+  transform: scale(0.9); 
+  transform-origin: right top;
+}
+
