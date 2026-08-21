@@ -1,17 +1,10 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyAIEfrRUJhcBZBPVFo45RTnmbKi1gCoPM4",
-  authDomain: "rechnoe-plemya.firebaseapp.com",
-  projectId: "rechnoe-plemya",
-  storageBucket: "rechnoe-plemya.firebasestorage.app",
-  messagingSenderId: "196996616856",
-  appId: "1:196996616856:web:e173494e8b32a874cdb6ed"
-};
+const SUPABASE_URL = 'https://ppqpgfxwlfskiaixtczc.supabase.co'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwcXBnZnh3bGZza2lhaXh0Y3pjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODAwNzYsImV4cCI6MjEwMjg1NjA3Nn0.gChKP4Z7Q0hqvZZ7v82m24yoJlPMuSe_0qk2IMBdVlY';
 
+const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let useFirebase = firebaseConfig.apiKey !== "ВСТАВЬ_СЮДА_API_KEY";
-let db = null;
+let useSupabase = SUPABASE_URL !== 'ТВОЙ_URL_ИЗ_SUPABASE';
 let currentUser = null;
-
 window.appProgress = {};
 window.appGoals = {};
 
@@ -35,9 +28,7 @@ if (!window.storage) {
 
 function startApp() {
   initDomainToggle();
-  if (useFirebase) {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
+  if (useSupabase) {
     initAuthUI();
   } else {
     initLocalAuthUI();
@@ -51,116 +42,171 @@ function setModalOpen(isOpen) {
 }
 
 let authMode = "login";
+
 function initAuthUI() {
-  const modal = document.getElementById('authModal');
   const btnLogout = document.getElementById('btnLogout');
   const btnSubmit = document.getElementById('btnAuthSubmit');
   const btnToggle = document.getElementById('btnAuthToggleMode');
   const btnForgot = document.getElementById('btnForgotPassword');
+  
+  const btnVerifySignup = document.getElementById('btnVerifySignup');
+  const btnBackToAuth = document.getElementById('btnBackToAuth');
+  
+  const emailInp = document.getElementById('authEmail');
+  const pwdInp = document.getElementById('authPassword');
+  const codeInp = document.getElementById('authConfirmCode');
+  
+  const mainStep = document.getElementById('authMainStep');
+  const confirmStep = document.getElementById('authConfirmStep');
+  
   const errorEl = document.getElementById('authError');
   const infoEl = document.getElementById('authInfo');
   const titleEl = document.getElementById('authTitle');
-  const hintEl = document.getElementById('authHint');
-  const emailInp = document.getElementById('authEmail');
-  const pwdInp = document.getElementById('authPassword');
 
-  function showError(msg) { clearInfo(); errorEl.textContent = msg; errorEl.style.display = 'block'; }
+  function showError(msg) { infoEl.style.display = 'none'; errorEl.textContent = msg; errorEl.style.display = 'block'; }
   function clearError() { errorEl.style.display = 'none'; }
-  function showInfo(msg) { clearError(); infoEl.textContent = msg; infoEl.style.display = 'block'; }
+  function showInfo(msg) { errorEl.style.display = 'none'; infoEl.textContent = msg; infoEl.style.display = 'block'; }
   function clearInfo() { infoEl.style.display = 'none'; }
+  function clearMsg() { clearError(); clearInfo(); }
 
   function updateModeUI() {
-    clearError(); clearInfo();
+    clearMsg();
+    mainStep.style.display = 'block';
+    confirmStep.style.display = 'none';
     if (authMode === "login") {
       titleEl.textContent = "Вход";
       btnSubmit.textContent = "Войти";
       btnToggle.textContent = "Зарегистрироваться";
     } else {
       titleEl.textContent = "Регистрация";
-      hintEl.textContent = "Придумай пароль";
       btnSubmit.textContent = "Зарегистрироваться";
       btnToggle.textContent = "Уже есть аккаунт? Войти";
     }
   }
+
   btnToggle.onclick = () => { authMode = authMode === "login" ? "register" : "login"; updateModeUI(); };
-  btnForgot.onclick = () => {
-    clearError(); clearInfo();
+  btnBackToAuth.onclick = () => { updateModeUI(); };
+
+  btnForgot.onclick = async () => {
+    clearMsg();
     const email = emailInp.value.trim();
     if (!email) { showError('Сначала введи email в поле выше.'); return; }
-    firebase.auth().sendPasswordResetEmail(email)
-      .then(() => showInfo('Письмо для сброса пароля отправлено на ' + email + '. Проверь папку «Спам».'))
-      .catch(err => showError(translateAuthError(err)));
+    const { data, error } = await _supabase.auth.resetPasswordForEmail(email);
+    if (error) showError('Ошибка: ' + error.message);
+    else showInfo('Письмо с кодом для сброса пароля отправлено! Проверь папку Спам.');
   };
+
   btnSubmit.onclick = async () => {
-    clearError(); clearInfo();
+    clearMsg();
     const email = emailInp.value.trim();
     const password = pwdInp.value;
+    
     if (!email || !password) { showError('Заполни email и пароль.'); return; }
     if (password.length < 6) { showError('Пароль должен быть не короче 6 символов.'); return; }
+
     btnSubmit.disabled = true;
     btnSubmit.textContent = "Загрузка...";
-    try {
-      if (authMode === "login") {
-        const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
-        if (!userCred.user.emailVerified) {
-          await firebase.auth().signOut();
-          showError('Почта не подтверждена! Найди письмо (проверь «Спам») и перейди по ссылке');
+
+    if (authMode === "login") {
+      const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+           showError("Почта не подтверждена! Зарегистрируйся заново, чтобы получить код.");
+        } else {
+           showError('Ошибка входа. Проверь почту и пароль.');
         }
-      } else {
-        const userCred = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        await userCred.user.sendEmailVerification();
-        await firebase.auth().signOut();
-        showInfo('На твою почту отправлено письмо. Найди его (проверь папку «Спам») и нажми на ссылку, чтобы активировать аккаунт. После этого возвращайся сюда');
-        authMode = "login";
-        titleEl.textContent = "Вход";
-        btnSubmit.textContent = "Войти";
-        btnToggle.textContent = "Ещё нет аккаунта? Зарегистрироваться";
       }
-    } catch (err) {
-      showError(translateAuthError(err));
+    } else {
+      const { data, error } = await _supabase.auth.signUp({ email, password });
+      if (error) {
+        showError('Ошибка регистрации: ' + error.message);
+      } else {
+        mainStep.style.display = 'none';
+        confirmStep.style.display = 'block';
+      }
     }
     btnSubmit.disabled = false;
     btnSubmit.textContent = authMode === "login" ? "Войти" : "Зарегистрироваться";
   };
-  btnLogout.onclick = () => firebase.auth().signOut();
 
-  firebase.auth().onAuthStateChanged(user => {
-    if (user && user.emailVerified) {
-      currentUser = user;
-      setModalOpen(false);
-      btnLogout.style.display = 'inline-block';
-      loadCloudData();
-    } else {
-      currentUser = null;
-      setModalOpen(true);
-      btnLogout.style.display = 'none';
-      window.appProgress = {}; window.appGoals = {};
-      window.appRenderAll();
+  btnVerifySignup.onclick = async () => {
+    clearMsg();
+    const email = emailInp.value.trim();
+    const token = codeInp.value.trim();
+    
+if (!token || token.length < 8) { showError('Введи 8-значный код.'); return; }
+
+    btnVerifySignup.disabled = true;
+    btnVerifySignup.textContent = "Проверка...";
+
+    const { data, error } = await _supabase.auth.verifyOtp({
+      email: email,
+      token: token,
+      type: 'signup'
+    });
+
+    btnVerifySignup.disabled = false;
+    btnVerifySignup.textContent = "Подтвердить код";
+
+    if (error) {
+      showError('Неверный код или срок действия истек.');
     }
+  };
+
+  if (btnLogout) {
+    btnLogout.onclick = async () => {
+      await _supabase.auth.signOut();
+      window.location.reload();
+    };
+  }
+
+  _supabase.auth.getSession().then(({ data: { session } }) => {
+    handleSession(session, btnLogout);
   });
+
+  _supabase.auth.onAuthStateChange((event, session) => {
+    handleSession(session, btnLogout);
+  });
+
   updateModeUI();
 }
 
+function handleSession(session, btnLogout) {
+  if (session) {
+    currentUser = session.user;
+    setModalOpen(false);
+    if (btnLogout) btnLogout.style.display = 'inline-block';
+    loadCloudData();
+  } else {
+    currentUser = null;
+    setModalOpen(true);
+    if (btnLogout) btnLogout.style.display = 'none';
+    window.appProgress = {}; 
+    window.appGoals = {};
+    window.appRenderAll();
+  }
+}
+
 function initLocalAuthUI() {
-  const modal = document.getElementById('authModal');
   const btnLogout = document.getElementById('btnLogout');
-  const btnSubmit = document.getElementById('btnAuthSubmit');
   const btnToggle = document.getElementById('btnAuthToggleMode');
   const btnForgot = document.getElementById('btnForgotPassword');
   const infoEl = document.getElementById('authInfo');
 
   if (!localStorage.getItem('river-medals-auth')) {
     setModalOpen(true);
-    btnLogout.style.display = 'none';
+    if(btnLogout) btnLogout.style.display = 'none';
   } else {
-    btnLogout.style.display = 'inline-block';
+    if(btnLogout) btnLogout.style.display = 'inline-block';
   }
+  
   btnForgot.onclick = () => {
     infoEl.textContent = "Локальный режим: сброс пароля недоступен.";
     infoEl.style.display = 'block';
   };
   btnToggle.style.display = "none";
-  btnSubmit.onclick = () => {
+  
+  document.getElementById('btnAuthSubmit').onclick = () => {
     const e = document.getElementById('authEmail').value.trim();
     const p = document.getElementById('authPassword').value;
     if (!e || p.length < 6) {
@@ -170,44 +216,39 @@ function initLocalAuthUI() {
     }
     localStorage.setItem('river-medals-auth', 'true');
     setModalOpen(false);
-    btnLogout.style.display = 'inline-block';
+    if(btnLogout) btnLogout.style.display = 'inline-block';
     flashSaved();
     window.appRenderAll();
   };
-  btnLogout.onclick = () => {
-    localStorage.removeItem('river-medals-auth');
-    window.location.reload();
-  };
+  
+  if(btnLogout) {
+    btnLogout.onclick = () => {
+      localStorage.removeItem('river-medals-auth');
+      window.location.reload();
+    };
+  }
   loadLocalFallbackData();
 }
 
-function translateAuthError(err) {
-  const map = {
-    'auth/invalid-email': 'Некорректный email.',
-    'auth/user-not-found': 'Аккаунт не найден.',
-    'auth/wrong-password': 'Неверный пароль.',
-    'auth/invalid-credential': 'Неверный email или пароль.',
-    'auth/email-already-in-use': 'Этот email уже зарегистрирован. Выберите «Войти».',
-    'auth/weak-password': 'Пароль слишком простой (нужно минимум 6 символов).',
-    'auth/too-many-requests': 'Слишком много попыток. Подождите пару минут.',
-  };
-  return map[err.code] || ('Ошибка: ' + err.message);
-}
-
 async function loadCloudData() {
+  if (!currentUser) return;
   try {
-    const docRef = db.collection("users").doc(currentUser.uid);
-    const docSnap = await docRef.get();
-    if (docSnap.exists) {
-      const data = docSnap.data();
+    const { data, error } = await _supabase
+      .from('user_data')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (data) {
       window.appProgress = data.progress || {};
       window.appGoals = data.goals || {};
     } else {
-      window.appProgress = {}; window.appGoals = {};
+      window.appProgress = {}; 
+      window.appGoals = {};
     }
     window.appRenderAll();
   } catch (e) {
-    console.error("Ошибка загрузки данных:", e);
+    console.error("Ошибка загрузки данных из Supabase:", e);
   }
 }
 
@@ -230,16 +271,22 @@ async function loadLocalFallbackData() {
 window.firebaseSaveData = async function (progressData, goalsData) {
   window.appProgress = progressData;
   window.appGoals = goalsData;
-  if (useFirebase && currentUser) {
+
+  if (useSupabase && currentUser) {
     try {
-      await db.collection("users").doc(currentUser.uid).set({
-        progress: window.appProgress,
-        goals: window.appGoals,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
+      const { error } = await _supabase
+        .from('user_data')
+        .upsert({
+          id: currentUser.id,
+          progress: window.appProgress,
+          goals: window.appGoals,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
       flashSaved();
     } catch (e) {
-      console.error("Ошибка сохранения Firebase:", e);
+      console.error("Ошибка сохранения в Supabase:", e);
     }
   } else {
     try {
@@ -318,7 +365,7 @@ const MEDALS = [
 {id:"a16", typeAward:"medal", sphere:"Сфера активности", subcat:"Отрядные", name:"«За верность порядку»", req:"Совершить 100 проверок дозорных, будучи Проверяющим.", type:"counter", target:100, unit:"проверок", image:"https://catwar.net/medal/1365.png", blog:"https://catwar.net/blog13664"},
 {id:"a17", typeAward:"medal", sphere:"Сфера активности", subcat:"Отрядные", name:"«За точность распределения»", req:"Собрать 30 патрулей, будучи Собирающим.", type:"counter", target:30, unit:"патрулей", image:"https://catwar.net/medal/2801.png", blog:"https://catwar.net/blog13664"},
 {id:"a18", typeAward:"medal", sphere:"Сфера активности", subcat:"Мероприятия", name:"«За волю к победе на мероприятии «Мир, труд, Река!»»", type:"toggle", image:"https://catwar.net/medal/4246.png", blog:""},
-{id:"a19", typeAward:"medal", sphere:"Сфера творчества", subcat:"Мероприятия", name:"«За след, оставленный в легендах»", type:"toggle", image:"https://catwar.net/medal/2146.png", blog:""},
+{id:"a19", typeAward:"medal", sphere:"Сфера творчества", subcat:"Мероприятия", name:"«За след, оставленный в легендах»", type:"toggle", image:"https://catwar.net/medal/2146.png", blog:"", req: "Выдаётся за участие в особом регулярном квесте или за активную работу в его организации."},
 {id:"a20", typeAward:"medal", sphere:"Сфера активности", subcat:"Мероприятия", name:"«За ловкость лап»", req:"Накопить 6 баллов за охотничьи турниры: 1 место = 4 балла; 2 место = 3 балла; 3-5 места = 2 балла; Участие = 1,5 балла; Организация = 2 балла.", type:"counter", target:6, unit:"баллов", image:"https://catwar.net/medal/2797.png", blog:"https://catwar.net/blog51844"},
 {id:"d1", typeAward:"medal", sphere:"Сфера детства", subcat:"Общедоступные", name:"«За сохранение озорного нрава»", req:"Набрать 800 баллов, побеждая и принимая участие в играх от Озорников.", type:"counter", target:800, unit:"баллов", image:"https://catwar.net/medal/4249.png", blog:"https://catwar.net/blog14909"},
 {id:"d2", typeAward:"medal", sphere:"Сфера детства", subcat:"Общедоступные", name:"«За активную родительскую деятельность и заботу о котятах»", req:"Достичь 140 баллов за родительскую деятельность.", type:"counter", target:140, unit:"баллов", image:"https://catwar.net/medal/73.png", blog:"https://catwar.net/blog15700"},
@@ -463,9 +510,9 @@ const SUBCAT_ORDER = ["Общедоступные","Котячьи","Отряд�
 const VIEWS = [
   {id:"medals", label:"Медали"},
   {id:"achievements", label:"Ачивки"},
+    {id:"planner", label:"План"},
   {id:"requested", label:"Запрошено"},
   {id:"received", label:"Получено"},
-  {id:"planner", label:"План"},
   {id:"stats", label:"Статистика"},
 ];
 
@@ -1093,11 +1140,11 @@ function renderAwardsList(wrapId, typeAward, state) {
     <div class="filter-bar">
       <input type="text" id="${wrapId}Search" placeholder="Поиск по названию или требованию..." value="${escapeHTML(state.query)}">
       <select id="${wrapId}SphereFilter">
-        <option value="all">Все сферы</option>
+        <option value="all">Сферы</option>
         ${spheresToShow.map(s => `<option value="${escapeHTML(s)}">${s}</option>`).join("")}
       </select>
       <select id="${wrapId}FilterMode">
-        <option value="all">Все статусы</option>
+        <option value="all">Статусы</option>
         <option value="not-started">Не начато</option>
         <option value="in-progress">В процессе</option>
         <option value="ready">Можно запросить</option>
@@ -1241,7 +1288,7 @@ function renderPlanner() {
         plannerSectionHTML("В процессе", inProgressGoals),
         plannerSectionHTML("Не начато", notStartedGoals)
       ].join("")
-    : `<p class="empty-hint">Активных планов пока нет. Отметь звездочкой невыполненную награду, чтобы добавить её сюда.</p>`;
+    : `<p class="empty-hint">Отметь звездочкой невыполненную награду, чтобы добавить её сюда.</p>`;
 
   const q = plannerSearchQuery.trim().toLowerCase();
   const suggestions = q ? MEDALS.filter(m => {
@@ -1296,10 +1343,11 @@ function renderPlanner() {
 function renderStats() {
   const wrap = document.getElementById("view-stats");
 
-  const medalsTotal = MEDALS.filter(m => m.typeAward === "medal").length;
-  const medalsEarned = MEDALS.filter(m => m.typeAward === "medal" && isEarned(m)).length;
-  const achTotal = MEDALS.filter(m => m.typeAward === "achievement").length;
-  const achEarned = MEDALS.filter(m => m.typeAward === "achievement" && isEarned(m)).length;
+  const uniqueMedals = Array.from(new Set(MEDALS.filter(m => m.typeAward === "medal").map(m => m.id)));
+  const uniqueAch = Array.from(new Set(MEDALS.filter(m => m.typeAward === "achievement").map(m => m.id)));
+
+  const medalsEarned = uniqueMedals.filter(id => isEarned(MEDALS.find(x => x.id === id))).length;
+  const achEarned = uniqueAch.filter(id => isEarned(MEDALS.find(x => x.id === id))).length;
 
   const readyCount = MEDALS.filter(m => awardStage(m) === "ready").length;
   const requestedCount = MEDALS.filter(m => awardStage(m) === "requested").length;
@@ -1350,10 +1398,20 @@ function renderStats() {
 }
 
 function renderOverview() {
-  const medalsTotal = MEDALS.filter(m => m.typeAward === "medal").length;
-  const medalsEarned = MEDALS.filter(m => m.typeAward === "medal" && isEarned(m)).length;
-  const achTotal = MEDALS.filter(m => m.typeAward === "achievement").length;
-  const achEarned = MEDALS.filter(m => m.typeAward === "achievement" && isEarned(m)).length;
+  const uniqueMedals = Array.from(new Set(MEDALS.filter(m => m.typeAward === "medal").map(m => m.id)));
+  const uniqueAch = Array.from(new Set(MEDALS.filter(m => m.typeAward === "achievement").map(m => m.id)));
+
+  const medalsTotal = uniqueMedals.length;
+  const medalsEarned = uniqueMedals.filter(id => {
+    const m = MEDALS.find(x => x.id === id);
+    return m && isEarned(m);
+  }).length;
+
+  const achTotal = uniqueAch.length;
+  const achEarned = uniqueAch.filter(id => {
+    const m = MEDALS.find(x => x.id === id);
+    return m && isEarned(m);
+  }).length;
 
   const readyCount = MEDALS.filter(m => awardStage(m) === "ready").length;
   const banner = document.getElementById("readyBanner");
@@ -1375,25 +1433,37 @@ function renderOverview() {
 function initDomainToggle() {
   const btnNet = document.getElementById("btnDomainNet");
   const btnSu = document.getElementById("btnDomainSu");
+  
   function updateUI() {
+    if (!btnNet || !btnSu) return;
     btnNet.classList.toggle("active", currentDomainMode === "net");
     btnSu.classList.toggle("active", currentDomainMode === "su");
   }
-  btnNet.addEventListener("click", async () => {
-    currentDomainMode = "net";
-    await window.storage.set("river-medals-domain", currentDomainMode);
-    updateUI();
-    window.appRenderAll();
-  });
-  btnSu.addEventListener("click", async () => {
-    currentDomainMode = "su";
-    await window.storage.set("river-medals-domain", currentDomainMode);
-    updateUI();
-    window.appRenderAll();
-  });
-  updateUI();
-}
 
+  const savedDomain = localStorage.getItem("river-medals-domain");
+  if (savedDomain) {
+    currentDomainMode = savedDomain;
+  }
+  updateUI();
+
+  if (btnNet) {
+    btnNet.addEventListener("click", async () => {
+      currentDomainMode = "net";
+      await window.storage.set("river-medals-domain", currentDomainMode);
+      updateUI();
+      window.appRenderAll();
+    });
+  }
+  
+  if (btnSu) {
+    btnSu.addEventListener("click", async () => {
+      currentDomainMode = "su";
+      await window.storage.set("river-medals-domain", currentDomainMode);
+      updateUI();
+      window.appRenderAll();
+    });
+  }
+}
 window.appRenderAll = function () {
   renderViewTabs();
   document.getElementById("view-medals").style.display = currentView === "medals" ? "block" : "none";
@@ -1437,3 +1507,4 @@ function getReadyAwardsPlural(n) {
 }
 
 startApp();
+
