@@ -1215,8 +1215,7 @@ function renderAwardsList(wrapId, typeAward, state) {
   const sphereSel = document.getElementById(`${wrapId}SphereFilter`);
   if (sphereSel) sphereSel.value = state.sphereFilter;
 
-  bindSearchInput(`${wrapId}Search`, v => { if (typeAward === "medal") medalsSearchQuery = v; else achSearchQuery = v; window.appRenderAll(); });
-  if (filterSel) filterSel.addEventListener("change", (e) => { if (typeAward === "medal") medalsFilterMode = e.target.value; else achFilterMode = e.target.value; window.appRenderAll(); });
+bindSearchInput(`${wrapId}Search`, v => { if (typeAward === "medal") medalsSearchQuery = v; else achSearchQuery = v; }, window.appRenderAll);  if (filterSel) filterSel.addEventListener("change", (e) => { if (typeAward === "medal") medalsFilterMode = e.target.value; else achFilterMode = e.target.value; window.appRenderAll(); });
   if (sphereSel) sphereSel.addEventListener("change", (e) => { if (typeAward === "medal") medalsSphereFilter = e.target.value; else achSphereFilter = e.target.value; window.appRenderAll(); });
 
   document.querySelectorAll(`#${wrapId} .quickjump-btn`).forEach(btn => {
